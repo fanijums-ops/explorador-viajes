@@ -19,6 +19,7 @@ Proyecto integrador desarrollado con JavaScript puro, APIs y librerías para exp
 El proyecto permitirá:
 
 - Consultar destinos desde una API REST.
+- Mostrar destinos dinámicamente.
 - Buscar destinos.
 - Filtrar destinos por continente.
 - Ordenar resultados.
@@ -31,6 +32,12 @@ El proyecto permitirá:
 
 La aplicación utiliza una sola página HTML y divide progresivamente la lógica JavaScript en módulos según su responsabilidad.
 
+Actualmente la aplicación separa:
+
+- Comunicación con APIs.
+- Coordinación principal.
+- Renderizado de la interfaz.
+
 ## Versión actual
 
-v0.2.0 - Integración con REST Countries mediante Fetch API y módulos JavaScript.
+v0.3.0 - Renderizado dinámico de destinos obtenidos desde REST Countries.

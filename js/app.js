@@ -13,6 +13,14 @@ import {
 } from "./api/countriesApi.js";
 
 
+import {
+    mostrarCargando,
+    mostrarError,
+    renderPaises,
+    actualizarContador
+} from "./ui/ui.js";
+
+
 /* =========================================
    ESTADO DE LA APLICACIÓN
 ========================================= */
@@ -24,17 +32,15 @@ let paises = [];
    REFERENCIAS DEL DOM
 ========================================= */
 
-const destinationsContainer = document.querySelector(
-    "#destinations-container"
-);
+const destinationsContainer =
+    document.querySelector(
+        "#destinations-container"
+    );
 
-const resultsCount = document.querySelector(
-    "#results-count"
-);
-
-const initialMessage = document.querySelector(
-    "#initial-message"
-);
+const resultsCount =
+    document.querySelector(
+        "#results-count"
+    );
 
 
 /* =========================================
@@ -52,34 +58,17 @@ async function init() {
        MOSTRAR ESTADO DE CARGA
     ====================================== */
 
-    initialMessage.innerHTML = `
-        <div class="text-5xl mb-4">
-            🌎
-        </div>
-
-        <h3
-            class="
-                text-xl
-                font-semibold
-                text-slate-800
-                mb-2
-            "
-        >
-            Cargando destinos...
-        </h3>
-
-        <p class="text-slate-500">
-            Estamos consultando información
-            de países alrededor del mundo.
-        </p>
-    `;
+    mostrarCargando(
+        destinationsContainer
+    );
 
 
     /* =====================================
        OBTENER PAÍSES DESDE LA API
     ====================================== */
 
-    paises = await obtenerPaises();
+    paises =
+        await obtenerPaises();
 
 
     /* =====================================
@@ -93,66 +82,43 @@ async function init() {
 
 
     /* =====================================
-       ACTUALIZAR CONTADOR
+       VALIDAR SI LA API RETORNÓ DATOS
     ====================================== */
 
-    resultsCount.textContent =
-        `${paises.length} destinos`;
+    if (paises.length === 0) {
+
+        mostrarError(
+            destinationsContainer
+        );
+
+        actualizarContador(
+            0,
+            resultsCount
+        );
+
+        return;
+
+    }
 
 
     /* =====================================
-       MOSTRAR RESULTADO DE LA CARGA
+       RENDERIZAR DESTINOS
     ====================================== */
 
-    if (paises.length > 0) {
+    renderPaises(
+        paises,
+        destinationsContainer
+    );
 
-        initialMessage.innerHTML = `
-            <div class="text-5xl mb-4">
-                ✅
-            </div>
 
-            <h3
-                class="
-                    text-xl
-                    font-semibold
-                    text-slate-800
-                    mb-2
-                "
-            >
-                Destinos cargados
-            </h3>
+    /* =====================================
+       ACTUALIZAR CONTADOR
+    ====================================== */
 
-            <p class="text-slate-500">
-                Se obtuvieron ${paises.length}
-                destinos correctamente.
-            </p>
-        `;
-
-    } else {
-
-        initialMessage.innerHTML = `
-            <div class="text-5xl mb-4">
-                ⚠️
-            </div>
-
-            <h3
-                class="
-                    text-xl
-                    font-semibold
-                    text-slate-800
-                    mb-2
-                "
-            >
-                No fue posible cargar los destinos
-            </h3>
-
-            <p class="text-slate-500">
-                Verifica tu conexión e intenta
-                nuevamente.
-            </p>
-        `;
-
-    }
+    actualizarContador(
+        paises.length,
+        resultsCount
+    );
 
 }
 

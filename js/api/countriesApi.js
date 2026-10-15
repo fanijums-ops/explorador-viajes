@@ -1,86 +1,28 @@
-/* =========================================
-   REST COUNTRIES API
-   Comunicación con la API de países
-========================================= */
+//Comunicación con la API de países
 
+const API_URL = "https://juancognitus.github.io/explorador-viajes-api/paises.json";
 
-/* =========================================
-   CONFIGURACIÓN DE LA API
-========================================= */
+//Export permite exportar 
+export async function obtenerPaises(){
+    try{
+        const response = await fetch(API_URL);
 
-const API_URL =
-    "https://juancognitus.github.io/explorador-viajes-api/paises.json";
-
-
-/* =========================================
-   OBTENER PAÍSES
-========================================= */
-
-export async function obtenerPaises() {
-
-    try {
-
-        /* =====================================
-           REALIZAR PETICIÓN HTTP
-        ====================================== */
-
-        const response = await fetch(
-            `${API_URL}?limit=100`,
-            {
-                headers: {
-                    Authorization: `Bearer ${API_KEY}`
-                }
-            }
-        );
-
-
-        /* =====================================
-           VALIDAR RESPUESTA HTTP
-        ====================================== */
-
-        if (!response.ok) {
-
-            throw new Error(
-                `Error HTTP: ${response.status}`
-            );
-
+        if(!response.ok){
+            throw new Error(`Error al obtener los países: ${response.status} ${response.statusText}`);
         }
 
-
-        /* =====================================
-           CONVERTIR RESPUESTA A JSON
-        ====================================== */
-
         const result = await response.json();
+    
+        const paises = result;
 
-
-        /* =====================================
-           OBTENER ARREGLO DE PAÍSES
-        ====================================== */
-
-        const paises =
-            result.data?.objects ?? [];
-
-
-        /* =====================================
-           RETORNAR RESULTADO
-        ====================================== */
+        console.log(`Países obtenidos:`, paises);
 
         return paises;
 
-    } catch (error) {
-
-        /* =====================================
-           MANEJO DE ERRORES
-        ====================================== */
-
-        console.error(
-            "Error al obtener los países:",
-            error
-        );
-
+    }catch(error){
+        console.log(`Error al obtener los países:`, error);
         return [];
-
     }
-
 }
+
+obtenerPaises();
