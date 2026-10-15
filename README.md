@@ -20,9 +20,9 @@ El proyecto permitirá:
 
 - Consultar destinos desde una API REST.
 - Mostrar destinos dinámicamente.
-- Buscar destinos.
+- Buscar destinos por nombre.
 - Filtrar destinos por continente.
-- Ordenar resultados.
+- Ordenar resultados alfabéticamente.
 - Consultar información detallada.
 - Visualizar la ubicación del destino en un mapa.
 - Guardar destinos favoritos.
@@ -37,7 +37,8 @@ Actualmente la aplicación separa:
 - Comunicación con APIs.
 - Coordinación principal.
 - Renderizado de la interfaz.
+- Búsqueda, filtrado y ordenamiento de información.
 
 ## Versión actual
 
-v0.3.0 - Renderizado dinámico de destinos obtenidos desde REST Countries.
+v0.4.0 - Búsqueda, filtrado y ordenamiento dinámico de destinos.

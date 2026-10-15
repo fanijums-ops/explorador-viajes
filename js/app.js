@@ -20,6 +20,10 @@ import {
     actualizarContador
 } from "./ui/ui.js";
 
+import {
+    procesarPaises
+} from "./utils/filters.js";
+
 
 /* =========================================
    ESTADO DE LA APLICACIÓN
@@ -41,6 +45,47 @@ const resultsCount =
     document.querySelector(
         "#results-count"
     );
+    const searchInput =
+    document.querySelector(
+        "#search-input"
+    );
+
+const continentFilter =
+    document.querySelector(
+        "#continent-filter"
+    );
+
+const sortFilter =
+    document.querySelector(
+        "#sort-filter"
+    );
+
+    //APLICAR FILTROS 
+    function aplicarFiltros() {
+const texto = searchInput.value;
+const continente = continentFilter.value;
+const criterioOrden =sortFilter.value;
+
+//procesar los paises 
+const resultados = procesarPaises(paises, texto, continente, criterioOrden);
+
+//RENDERIZAR PAISES 
+renderPaises(resultados, destinationsContainer);
+actualizarContador(resultados.length, resultsCount);
+}
+   
+//REGISTRAR EVENTOS 
+function registrarEventos() {
+    //BUSQUEDA EN TIEMPO REAL
+    searchInput.addEventListener('input', aplicarFiltros);
+
+    //FILTRO POR CONTINENTE 
+    continentFilter.addEventListener('change', aplicarFiltros);
+    
+    //ORDENAMIENTO 
+    sortFilter.addEventListener('change', aplicarFiltros);
+
+}
 
 
 /* =========================================
@@ -100,26 +145,14 @@ async function init() {
 
     }
 
+//MOSTRAR RESULTADOS INICIALES
+aplicarFiltros();
 
     /* =====================================
-       RENDERIZAR DESTINOS
+       REGISTRAR EVENTOS
     ====================================== */
 
-    renderPaises(
-        paises,
-        destinationsContainer
-    );
-
-
-    /* =====================================
-       ACTUALIZAR CONTADOR
-    ====================================== */
-
-    actualizarContador(
-        paises.length,
-        resultsCount
-    );
-
+    registrarEventos();
 }
 
 
