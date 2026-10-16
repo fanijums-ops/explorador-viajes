@@ -2,7 +2,7 @@
 
 const API_URL = "https://juancognitus.github.io/explorador-viajes-api/paises.json";
 
-//Export permite exportar 
+//Export permite expor
 export async function obtenerPaises(){
     try{
         const response = await fetch(API_URL);

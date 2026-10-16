@@ -57,10 +57,10 @@ export function ordenarPaises(paises, criterio){
     }
 
     //Funcion cambiando procesamiento 
-    export function procesarPaises(paises, texto, continente, criterio){
+    export function procesarPaises(paises, texto, continente, criterioOrden){
         let resultado = buscarPaises(paises, texto)
         resultado = filtrarPorContinente(resultado, continente)
-        resultado = ordenarPaises(resultado, criterio)
+        resultado = ordenarPaises(resultado, criterioOrden)
         return resultado;
 
     }

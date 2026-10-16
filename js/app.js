@@ -7,7 +7,6 @@
 /* =========================================
    IMPORTACIONES
 ========================================= */
-
 import {
     obtenerPaises
 } from "./api/countriesApi.js";
@@ -17,8 +16,17 @@ import {
     mostrarCargando,
     mostrarError,
     renderPaises,
-    actualizarContador
+    actualizarContador,
+    mostrarDetalle,
+    cerrarDetalle
 } from "./ui/ui.js";
+
+
+import {
+    crearMapa,
+    destruirMapa
+} from "./ui/mapUI.js";
+
 
 import {
     procesarPaises
@@ -60,8 +68,31 @@ const sortFilter =
         "#sort-filter"
     );
 
+const detailModal =
+    document.querySelector(
+        "#detail-modal"
+    );
+
+const detailModalContent =
+    document.querySelector(
+        "#detail-modal-content"
+    );
+/* =========================================
+   BUSCAR PAÍS POR CÓDIGO
+========================================= */
+
+function obtenerPaisPorCodigo(
+    codigo
+) {
+
+    return paises.find(
+        (pais) =>
+            pais.codes?.alpha_3 === codigo
+    );
+
+}
     //APLICAR FILTROS 
-    function aplicarFiltros() {
+function aplicarFiltros() {
 const texto = searchInput.value;
 const continente = continentFilter.value;
 const criterioOrden =sortFilter.value;
@@ -73,7 +104,34 @@ const resultados = procesarPaises(paises, texto, continente, criterioOrden);
 renderPaises(resultados, destinationsContainer);
 actualizarContador(resultados.length, resultsCount);
 }
-   
+//ABRIR DETALLE DEL DESTINO
+
+function abrirDetalle(codigo){
+const pais = obtenerPaisPorCodigo(codigo);
+
+if(!pais){
+    console.warn("País no encontrado");
+    return;
+}
+
+//MOSTRAR DETALLE 
+const datosMapa = mostrarDetalle(pais, detailModal, detailModalContent);
+setTimeout(() => {
+    crearMapa(
+        datosMapa.latitud,
+        datosMapa.longitud,
+        datosMapa.nombre
+    );
+}, 0);
+}
+
+//CERRAR MODEL DE DETALLE 
+function cerrarModalDetalle(){
+    destruirMapa();
+    cerrarDetalle(detailModal,detailModalContent);
+}
+
+
 //REGISTRAR EVENTOS 
 function registrarEventos() {
     //BUSQUEDA EN TIEMPO REAL
@@ -85,11 +143,110 @@ function registrarEventos() {
     //ORDENAMIENTO 
     sortFilter.addEventListener('change', aplicarFiltros);
 
+    /* =====================================
+       ACCIONES DE LAS TARJETAS
+    ====================================== */
+
+    destinationsContainer.addEventListener(
+        "click",
+        (event) => {
+
+            const boton =
+                event.target.closest(
+                    "[data-action]"
+                );
+
+
+            if (!boton) {
+
+                return;
+
+            }
+
+
+            const accion =
+                boton.dataset.action;
+
+            const codigo =
+                boton.dataset.countryCode;
+
+
+            if (accion === "detail") {
+
+                abrirDetalle(
+                    codigo
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =====================================
+       CERRAR MODAL
+    ====================================== */
+
+    detailModal.addEventListener(
+        "click",
+        (event) => {
+
+            if (
+                event.target.id ===
+                "btn-close-detail"
+            ) {
+
+                cerrarModalDetalle();
+
+                return;
+
+            }
+
+
+            if (
+                event.target ===
+                detailModal
+            ) {
+
+                cerrarModalDetalle();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================
+       CERRAR MODAL CON ESCAPE
+    ====================================== */
+
+    document.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key === "Escape" &&
+                !detailModal.classList.contains(
+                    "hidden"
+                )
+            ) {
+
+                cerrarModalDetalle();
+
+            }
+
+        }
+    );
+
 }
 
 
 /* =========================================
    INICIALIZACIÓN DE LA APLICACIÓN
+========================================= */
+
+/* =========================================
+   INICIAR APLICACIÓN
 ========================================= */
 
 async function init() {
@@ -109,7 +266,7 @@ async function init() {
 
 
     /* =====================================
-       OBTENER PAÍSES DESDE LA API
+       OBTENER PAÍSES
     ====================================== */
 
     paises =
@@ -127,7 +284,7 @@ async function init() {
 
 
     /* =====================================
-       VALIDAR SI LA API RETORNÓ DATOS
+       VALIDAR API
     ====================================== */
 
     if (paises.length === 0) {
@@ -145,14 +302,20 @@ async function init() {
 
     }
 
-//MOSTRAR RESULTADOS INICIALES
-aplicarFiltros();
+
+    /* =====================================
+       MOSTRAR RESULTADOS
+    ====================================== */
+
+    aplicarFiltros();
+
 
     /* =====================================
        REGISTRAR EVENTOS
     ====================================== */
 
     registrarEventos();
+
 }
 
 
