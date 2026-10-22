@@ -11,6 +11,12 @@ import {
     obtenerPaises
 } from "./api/countriesApi.js";
 
+import {
+    obtenerFavoritos,
+    agregarFavorito,
+    eliminarFavorito,
+    esFavorito
+} from "./services/favoritesService.js";
 
 import {
     mostrarCargando,
@@ -18,7 +24,8 @@ import {
     renderPaises,
     actualizarContador,
     mostrarDetalle,
-    cerrarDetalle
+    cerrarDetalle,
+    mostrarFavoritosVacios
 } from "./ui/ui.js";
 
 
@@ -38,6 +45,9 @@ import {
 ========================================= */
 
 let paises = [];
+
+let vistaActual =
+    "explorar";
 
 
 /* =========================================
@@ -68,6 +78,27 @@ const sortFilter =
         "#sort-filter"
     );
 
+    const searchForm =
+    document.querySelector(
+        "#search-form"
+    );
+
+    const btnExplorar =
+    document.querySelector(
+        "#btn-explorar"
+    );
+    
+    const btnFavoritos =
+    document.querySelector(
+        "#btn-favoritos"
+    );
+
+    const sectionTitle =
+    document.querySelector(
+        "#section-title"
+    );
+
+
 const detailModal =
     document.querySelector(
         "#detail-modal"
@@ -91,8 +122,84 @@ function obtenerPaisPorCodigo(
     );
 
 }
+
+/* =========================================
+   ACTUALIZAR NAVEGACIÓN
+========================================= */
+
+function actualizarNavegacion() {
+
+    if (
+        vistaActual === "explorar"
+    ) {
+
+        btnExplorar.className = `
+            px-4
+            py-2
+            bg-blue-600
+            text-white
+            rounded-lg
+            font-medium
+            cursor-pointer
+            hover:bg-blue-700
+            transition
+        `;
+
+        btnFavoritos.className = `
+            px-4
+            py-2
+            bg-white
+            text-slate-700
+            border
+            border-slate-300
+            rounded-lg
+            font-medium
+            cursor-pointer
+            hover:bg-slate-100
+            transition
+        `;
+
+    } else {
+
+        btnExplorar.className = `
+            px-4
+            py-2
+            bg-white
+            text-slate-700
+            border
+            border-slate-300
+            rounded-lg
+            font-medium
+            cursor-pointer
+            hover:bg-slate-100
+            transition
+        `;
+
+        btnFavoritos.className = `
+            px-4
+            py-2
+            bg-blue-600
+            text-white
+            rounded-lg
+            font-medium
+            cursor-pointer
+            hover:bg-blue-700
+            transition
+        `;
+
+    }
+
+}
+
     //APLICAR FILTROS 
 function aplicarFiltros() {
+    if (
+        vistaActual !== "explorar"
+    ) {
+
+        return;
+
+    }    
 const texto = searchInput.value;
 const continente = continentFilter.value;
 const criterioOrden =sortFilter.value;
@@ -100,10 +207,212 @@ const criterioOrden =sortFilter.value;
 //procesar los paises 
 const resultados = procesarPaises(paises, texto, continente, criterioOrden);
 
-//RENDERIZAR PAISES 
 renderPaises(resultados, destinationsContainer);
 actualizarContador(resultados.length, resultsCount);
 }
+
+/* =========================================
+   MOSTRAR VISTA EXPLORAR
+========================================= */
+function mostrarExplorar() {
+
+    vistaActual =
+        "explorar";
+
+
+    sectionTitle.textContent =
+        "Destinos";
+
+
+    searchForm.classList.remove(
+        "hidden"
+    );
+
+
+    actualizarNavegacion();
+
+
+    aplicarFiltros();
+
+}
+
+/* =========================================
+   MOSTRAR VISTA FAVORITOS
+========================================= */
+
+function mostrarFavoritos() {
+
+    vistaActual =
+        "favoritos";
+
+
+    sectionTitle.textContent =
+        "Mis favoritos";
+
+
+    searchForm.classList.add(
+        "hidden"
+    );
+
+
+    actualizarNavegacion();
+
+
+    const favoritos =
+        obtenerFavoritos();
+
+
+    if (
+        favoritos.length === 0
+    ) {
+
+        mostrarFavoritosVacios(
+            destinationsContainer
+        );
+
+        actualizarContador(
+            0,
+            resultsCount
+        );
+
+        return;
+
+    }
+
+
+    renderPaises(
+        favoritos,
+        destinationsContainer,
+        "favoritos"
+    );
+
+
+    actualizarContador(
+        favoritos.length,
+        resultsCount
+    );
+
+}
+
+/* =========================================
+   AGREGAR DESTINO A FAVORITOS
+========================================= */
+
+function manejarAgregarFavorito(
+    codigo
+) {
+
+    const pais =
+        obtenerPaisPorCodigo(
+            codigo
+        );
+
+
+    if (!pais) {
+
+        return;
+
+    }
+
+
+    if (
+        esFavorito(
+            codigo
+        )
+    ) {
+
+        Swal.fire({
+            icon: "info",
+            title: "Ya está en favoritos",
+            text:
+                "Este destino ya había sido guardado."
+        });
+
+        return;
+
+    }
+
+
+    const agregado =
+        agregarFavorito(
+            pais
+        );
+
+
+    if (agregado) {
+
+        Swal.fire({
+            icon: "success",
+            title: "Destino guardado",
+            text:
+                `${pais.names?.common ?? "El destino"} fue agregado a favoritos.`,
+            timer: 1800,
+            showConfirmButton: false
+        });
+
+    }
+
+}
+
+
+/* =========================================
+   ELIMINAR DESTINO DE FAVORITOS
+========================================= */
+
+async function manejarEliminarFavorito(
+    codigo
+) {
+
+    const pais =
+        obtenerPaisPorCodigo(
+            codigo
+        );
+
+
+    if (!pais) {
+
+        return;
+
+    }
+
+
+    const resultado =
+        await Swal.fire({
+            icon: "warning",
+            title: "Eliminar favorito",
+            text:
+                `¿Deseas eliminar ${pais.names?.common ?? "este destino"} de tus favoritos?`,
+            showCancelButton: true,
+            confirmButtonText: "Eliminar",
+            cancelButtonText: "Cancelar",
+            confirmButtonColor: "#dc2626"
+        });
+
+
+    if (!resultado.isConfirmed) {
+
+        return;
+
+    }
+
+
+    eliminarFavorito(
+        codigo
+    );
+
+
+    mostrarFavoritos();
+
+
+    Swal.fire({
+        icon: "success",
+        title: "Favorito eliminado",
+        timer: 1500,
+        showConfirmButton: false
+    });
+
+}
+
 //ABRIR DETALLE DEL DESTINO
 
 function abrirDetalle(codigo){
@@ -134,6 +443,21 @@ function cerrarModalDetalle(){
 
 //REGISTRAR EVENTOS 
 function registrarEventos() {
+
+    /* =====================================
+       EVITAR ENVÍO DEL FORMULARIO
+    ====================================== */
+
+    searchForm.addEventListener(
+        "submit",
+        (event) => {
+
+            event.preventDefault();
+
+        }
+    );
+}
+
     //BUSQUEDA EN TIEMPO REAL
     searchInput.addEventListener('input', aplicarFiltros);
 
@@ -142,6 +466,26 @@ function registrarEventos() {
     
     //ORDENAMIENTO 
     sortFilter.addEventListener('change', aplicarFiltros);
+
+  /* =====================================
+       NAVEGACIÓN - EXPLORAR
+    ====================================== */
+
+    btnExplorar.addEventListener(
+        "click",
+        mostrarExplorar
+    );
+
+      /* =====================================
+       NAVEGACIÓN - FAVORITOS
+    ====================================== */
+
+    btnFavoritos.addEventListener(
+        "click",
+        mostrarFavoritos
+    );
+
+ 
 
     /* =====================================
        ACCIONES DE LAS TARJETAS
@@ -176,13 +520,20 @@ function registrarEventos() {
                 abrirDetalle(
                     codigo
                 );
+                return;
 
             }
+    if (accion === "favorite") {
+      manejarAgregarFavorito(codigo);
+      return;
+    }
+    if (accion === "remove-favorite") {
+      manejarEliminarFavorito(codigo);
+    }
+  });
 
-        }
-    );
 
-
+                
     /* =====================================
        CERRAR MODAL
     ====================================== */
@@ -222,8 +573,7 @@ function registrarEventos() {
 
     document.addEventListener(
         "keydown",
-        (event) => {
-
+        (event) => { 
             if (
                 event.key === "Escape" &&
                 !detailModal.classList.contains(
@@ -237,8 +587,7 @@ function registrarEventos() {
 
         }
     );
-
-}
+    
 
 
 /* =========================================

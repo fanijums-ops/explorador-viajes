@@ -10,8 +10,8 @@ Proyecto integrador desarrollado con JavaScript puro, APIs y librerías para exp
 - REST Countries API
 - Leaflet
 - OpenStreetMap
-- LocalStorage
 - SweetAlert2
+- LocalStorage
 - Git
 - GitHub
 
@@ -25,10 +25,13 @@ El proyecto permite:
 - Filtrar destinos por continente.
 - Ordenar resultados alfabéticamente.
 - Consultar información detallada sin cambiar de página.
-- Visualizar la ubicación geográfica mediante Leaflet.
-- Interactuar con mapas de OpenStreetMap.
+- Visualizar ubicaciones mediante Leaflet.
 - Guardar destinos favoritos.
+- Evitar favoritos duplicados.
 - Persistir favoritos mediante LocalStorage.
+- Consultar una vista dinámica de favoritos.
+- Eliminar favoritos mediante confirmación.
+- Mostrar notificaciones utilizando SweetAlert2.
 
 ## Arquitectura
 
@@ -37,6 +40,7 @@ La aplicación utiliza una sola página HTML y divide la lógica JavaScript en m
 Actualmente la aplicación separa:
 
 - Comunicación con APIs.
+- Servicios y persistencia.
 - Coordinación principal.
 - Renderizado de la interfaz.
 - Integración de mapas.
@@ -44,47 +48,4 @@ Actualmente la aplicación separa:
 
 ## Versión actual
 
-v0.5.0 - Detalle dinámico de destinos e integración de mapas con Leaflet.# Explorador de Viajes y Lugares Turísticos
-
-Proyecto integrador desarrollado con JavaScript puro, APIs y librerías para explorar información de países y destinos alrededor del mundo.
-
-## Tecnologías
-
-- HTML5
-- JavaScript ES6+
-- Tailwind CSS
-- REST Countries API
-- LocalStorage
-- Leaflet
-- SweetAlert2
-- Git
-- GitHub
-
-## Características
-
-El proyecto permitirá:
-
-- Consultar destinos desde una API REST.
-- Mostrar destinos dinámicamente.
-- Buscar destinos por nombre.
-- Filtrar destinos por continente.
-- Ordenar resultados alfabéticamente.
-- Consultar información detallada.
-- Visualizar la ubicación del destino en un mapa.
-- Guardar destinos favoritos.
-- Persistir favoritos mediante LocalStorage.
-
-## Arquitectura
-
-La aplicación utiliza una sola página HTML y divide progresivamente la lógica JavaScript en módulos según su responsabilidad.
-
-Actualmente la aplicación separa:
-
-- Comunicación con APIs.
-- Coordinación principal.
-- Renderizado de la interfaz.
-- Búsqueda, filtrado y ordenamiento de información.
-
-## Versión actual
-
-v0.4.0 - Búsqueda, filtrado y ordenamiento dinámico de destinos.
+v0.6.0 - Favoritos persistentes con LocalStorage e integración de SweetAlert2.

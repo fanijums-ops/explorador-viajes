@@ -98,6 +98,47 @@ export function mostrarError(
 
 }
 
+/* =========================================
+   MOSTRAR FAVORITOS VACÍOS
+========================================= */
+
+export function mostrarFavoritosVacios(
+    contenedor
+) {
+
+    contenedor.innerHTML = `
+        <div
+            class="
+                col-span-full
+                bg-white
+                border
+                border-dashed
+                border-slate-300
+                rounded-xl
+                p-12
+                text-center
+            "
+        >
+
+            <div class="text-5xl mb-4">
+                ♡
+            </div>
+
+            <h3 class="text-xl font-semibold text-slate-800 mb-2">
+                No tienes destinos favoritos
+            </h3>
+
+            <p class="text-slate-500">
+                Explora los destinos y guarda
+                los que más te interesen.
+            </p>
+
+        </div>
+    `;
+
+}
+
+
 
 /* =========================================
    ACTUALIZAR CONTADOR
@@ -120,7 +161,9 @@ export function actualizarContador(
 
 export function renderPaises(
     paises,
-    contenedor
+    contenedor,
+    modo = "explorar"
+
 ) {
 
     /* =====================================
@@ -175,7 +218,7 @@ export function renderPaises(
        CREAR TARJETAS
     ====================================== */
 
-    const tarjetas =
+const tarjetas =
         paises
             .map((pais) => {
 
@@ -205,6 +248,55 @@ export function renderPaises(
                     );
 
 
+                /* =================================
+                   BOTÓN SEGÚN EL MODO
+                ================================== */
+
+                const botonFavorito =
+                    modo === "favoritos"
+                        ? `
+                            <button
+                                type="button"
+                                data-action="remove-favorite"
+                                data-country-code="${codigo}"
+                                class="
+                                    px-4
+                                    py-2
+                                    border
+                                    border-red-300
+                                    text-red-600
+                                    rounded-lg
+                                    cursor-pointer
+                                    hover:bg-red-50
+                                    transition
+                                "
+                            >
+                                ♥ Eliminar
+                            </button>
+                        `
+                        : `
+                            <button
+                                type="button"
+                                data-action="favorite"
+                                data-country-code="${codigo}"
+                                aria-label="Agregar ${nombre} a favoritos"
+                                class="
+                                    px-4
+                                    py-2
+                                    border
+                                    border-slate-300
+                                    text-slate-600
+                                    rounded-lg
+                                    cursor-pointer
+                                    hover:bg-slate-100
+                                    transition
+                                "
+                            >
+                                ♡
+                            </button>
+                        `;
+
+
                 return `
                     <article
                         class="
@@ -219,65 +311,28 @@ export function renderPaises(
                         "
                     >
 
-                        <!-- =============================
-                             BANDERA
-                        ============================== -->
-
-                        <div
-                            class="
-                                h-48
-                                bg-slate-100
-                                overflow-hidden
-                            "
-                        >
+                        <div class="h-48 bg-slate-100 overflow-hidden">
 
                             <img
                                 src="${bandera}"
                                 alt="Bandera de ${nombre}"
-                                class="
-                                    w-full
-                                    h-full
-                                    object-cover
-                                "
+                                class="w-full h-full object-cover"
                             >
 
                         </div>
 
 
-                        <!-- =============================
-                             INFORMACIÓN
-                        ============================== -->
-
                         <div class="p-5">
 
-                            <div
-                                class="
-                                    flex
-                                    items-start
-                                    justify-between
-                                    gap-4
-                                    mb-4
-                                "
-                            >
+                            <div class="flex items-start justify-between gap-4 mb-4">
 
                                 <div>
 
-                                    <h3
-                                        class="
-                                            text-xl
-                                            font-bold
-                                            text-slate-900
-                                        "
-                                    >
+                                    <h3 class="text-xl font-bold text-slate-900">
                                         ${nombre}
                                     </h3>
 
-                                    <p
-                                        class="
-                                            text-sm
-                                            text-slate-500
-                                        "
-                                    >
+                                    <p class="text-sm text-slate-500">
                                         ${region}
                                     </p>
 
@@ -301,37 +356,18 @@ export function renderPaises(
                             </div>
 
 
-                            <!-- =============================
-                                 POBLACIÓN
-                            ============================== -->
-
                             <div class="mb-5">
 
-                                <p
-                                    class="
-                                        text-xs
-                                        text-slate-500
-                                    "
-                                >
+                                <p class="text-xs text-slate-500">
                                     Población
                                 </p>
 
-                                <p
-                                    class="
-                                        text-lg
-                                        font-semibold
-                                        text-slate-800
-                                    "
-                                >
+                                <p class="text-lg font-semibold text-slate-800">
                                     ${poblacionFormateada}
                                 </p>
 
                             </div>
 
-
-                            <!-- =============================
-                                 ACCIONES
-                            ============================== -->
 
                             <div class="flex gap-3">
 
@@ -355,26 +391,7 @@ export function renderPaises(
                                     Ver más
                                 </button>
 
-
-                                <button
-                                    type="button"
-                                    data-action="favorite"
-                                    data-country-code="${codigo}"
-                                    aria-label="Agregar ${nombre} a favoritos"
-                                    class="
-                                        px-4
-                                        py-2
-                                        border
-                                        border-slate-300
-                                        text-slate-600
-                                        rounded-lg
-                                        cursor-pointer
-                                        hover:bg-slate-100
-                                        transition
-                                    "
-                                >
-                                    ♡
-                                </button>
+                                ${botonFavorito}
 
                             </div>
 
@@ -390,7 +407,7 @@ export function renderPaises(
     contenedor.innerHTML =
         tarjetas;
 
-}
+}  
 
 
 /* =========================================
